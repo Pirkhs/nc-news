@@ -1,8 +1,10 @@
 const express = require("express");
 const app = express();
-const {getAllTopics} = require("./controllers/app.controllers.js")
+const {getAllTopics, getAllEndpoints} = require("./controllers/app.controllers.js")
 
 app.get("/api/topics", getAllTopics)
+
+app.get("/api", getAllEndpoints)
 
 app.all("/*", (request, response, next) => {
     response.status(404).send({msg: "Route does not exist"})

@@ -23,6 +23,29 @@ describe('GET /api/topics', () => {
     });
 });
 
+describe('GET /api', () => {
+    test('STATUS 200: reponds with an object describing all the available endpoints on the API', () => {
+        return request(app)
+        .get("/api")
+        .expect(200)
+        .then(result => {
+            const {endpoints} = result.body
+            const parsedEndpoints = JSON.parse(endpoints)
+            expect(parsedEndpoints.length >= 1)
+            for (const endpoint in parsedEndpoints){
+                if (endpoint !== "GET /api") {
+                    // console.log(parsedEndpoints[endpoint])
+                    expect(typeof parsedEndpoints[endpoint].description).toBe("string")
+                    expect(Array.isArray(parsedEndpoints[endpoint].queries)).toBe(true)
+                    expect(typeof parsedEndpoints[endpoint].exampleResponse).toBe("object")
+                } else {
+                    expect(expect(typeof parsedEndpoints[endpoint].description).toBe("string"))
+                }
+            }
+        })
+    });
+});
+
 describe('Incorrect route', () => {
     test('STATUS: 404: should respond with appropriate error message when route does not exist', () => {
         return request(app)
