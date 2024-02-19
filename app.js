@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
-const {getAllTopics, getAllEndpoints, getArticleById, getAllArticles} = require("./controllers/app.controllers.js")
+const {getAllTopics, getAllEndpoints, getArticleById, getAllArticles, getCommentsByArticleId} = require("./controllers/app.controllers.js")
 
 app.get("/api/topics", getAllTopics)
 app.get("/api", getAllEndpoints)
 app.get("/api/articles/:article_id", getArticleById)
 // app.get("/api/articles", getAllArticles)
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
+
 
 
 // PSQL Errors
@@ -16,7 +18,7 @@ app.use((err, request, response, next) => {
 
 // Custom Errors
 app.use((err, request, response, next) => {
-    if (err.status && err.msg) response.status(404).send({msg: "Not found"})
+    if (err.status && err.msg) response.status(err.status).send({msg: err.msg})
     else next(err)
 })
 

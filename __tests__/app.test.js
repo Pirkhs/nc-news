@@ -90,6 +90,40 @@ describe('GET /api/articles:article_id', () => {
 //     });
 // });
 
+
+describe('GET /api/articles/:article_id/comments', () => {
+    test('STATUS 200: reponds with an array of comments for the given article_id', () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(result => {
+            const {comments} = result.body
+            console.log(comments)
+            expect(comments.length).toBe(11)
+            for (const comment of comments) expect(comment.article_id).toBe(1)
+            expect(comments).toBeSortedBy("created_at", {descending: true})
+        })
+    });
+    
+    test('STATUS: 400: responds with appropriate error message for when given an invalid article id', () => {
+        return request(app)
+        .get("/api/articles/notanid/comments")
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test("STATUS 404: reponds with appropriate error message for when given a valid but non-existant article id", () => {
+        return request(app)
+        .get("/api/articles/99999/comments")
+        .expect(404)
+        .then(result => {
+            expect(result.body.msg).toBe("Not found")
+        })
+    })
+});
+
 describe('Incorrect route', () => {
     test('STATUS 404: should respond with appropriate error message when route does not exist', () => {
         return request(app)
