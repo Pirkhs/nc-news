@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
-const {getAllTopics, getAllEndpoints, getArticleById} = require("./controllers/app.controllers.js")
+const {getAllTopics, getAllEndpoints, getArticleById, getAllArticles} = require("./controllers/app.controllers.js")
 
 app.get("/api/topics", getAllTopics)
 app.get("/api", getAllEndpoints)
 app.get("/api/articles/:article_id", getArticleById)
-
+// app.get("/api/articles", getAllArticles)
 
 
 // PSQL Errors

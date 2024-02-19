@@ -77,6 +77,18 @@ describe('GET /api/articles:article_id', () => {
     })
 });
 
+// describe('GET /api/articles', () => {
+//     test('STATUS 200: responds with an article array of object, each with their own appropriate properties and values ', () => {
+//         return request(app)
+//         .get("/api/articles")
+//         .expect(200)
+//         .then(result => {
+//             const {articles} = result.body
+//             // console.log(articles)
+//             expect(articles.length).toBe(13)
+//         })
+//     });
+// });
 
 describe('Incorrect route', () => {
     test('STATUS 404: should respond with appropriate error message when route does not exist', () => {
@@ -88,3 +100,4 @@ describe('Incorrect route', () => {
         })
     });
 });
+

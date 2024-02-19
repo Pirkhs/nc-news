@@ -23,3 +23,18 @@ exports.selectArticleById = (article_id) => {
         return article.rows
     })
 }
+
+// exports.selectAllArticles = () => {
+//     const articlesFile = require("../db/data/test-data/articles.js")
+//     return db.query(`
+//     SELECT * FROM articles
+//     `)
+//     .then(articles => {
+//         const articlesToSend = articles.rows.map(article => {
+//             delete article.body
+//             return article
+//         })
+    
+//         return articlesToSend
+//     })
+// }
