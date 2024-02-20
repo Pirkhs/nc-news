@@ -92,13 +92,12 @@ describe('GET /api/articles:article_id', () => {
 
 
 describe('GET /api/articles/:article_id/comments', () => {
-    test('STATUS 200: reponds with an array of comments for the given article_id', () => {
+    test('STATUS 200: responds with an array of comments for the given article_id', () => {
         return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
         .then(result => {
             const {comments} = result.body
-            console.log(comments)
             expect(comments.length).toBe(11)
             for (const comment of comments) expect(comment.article_id).toBe(1)
             expect(comments).toBeSortedBy("created_at", {descending: true})
@@ -114,7 +113,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     });
 
-    test("STATUS 404: reponds with appropriate error message for when given a valid but non-existant article id", () => {
+    test("STATUS 404: responds with appropriate error message for when given a valid but non-existant article id", () => {
         return request(app)
         .get("/api/articles/99999/comments")
         .expect(404)
@@ -122,6 +121,76 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(result.body.msg).toBe("Not found")
         })
     })
+});
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test("STATUS 201: responds with the posted comment requested for the article_id specified", () => {
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send({
+            username: "myAmazingUsername",
+            body: "My even more amazing body description"
+        })
+        .expect(201)
+        .then(result => {
+            const {comment} = result.body
+            expect(comment.comment_id).toBe(19)
+            expect(comment.body).toBe("My even more amazing body description")
+            expect(comment.article_id).toBe(2)
+            expect(comment.author).toBe("icellusedkars")
+            expect(comment.votes).toBe(0)
+            expect(typeof comment.created_at).toBe("string")
+        })
+    })
+
+    test('STATUS 400: responds with appropriate error message for a malformed body request ', () => {
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send({})
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 400: responds with appropriate error message for a failing schema validation ', () => {
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send({
+            username: 5,
+            body: null 
+        })
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 400: responds with appropriate error message for an invalid id ', () => {
+        return request(app)
+        .post("/api/articles/notAnId/comments")
+        .send({
+            username: "testUsername",
+            body: "Test body description"
+        })
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 404: responds with appropriate error message for a valid but non-existant id value ', () => {
+        return request(app)
+        .post("/api/articles/99999/comments")
+        .send({
+            username: "testUsername",
+            body: "Test body description"
+        })
+        .expect(404)
+        .then(result => {
+            expect(result.body.msg).toBe("Not found")
+        })
+    });
 });
 
 describe('Incorrect route', () => {

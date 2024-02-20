@@ -51,3 +51,26 @@ exports.selectCommentsByArticleId = (article_id) => {
         return results.rows
     })
 }
+
+exports.insertCommentByArticleId = (article_id, commentToPost) => {
+
+    return db.query(`
+    SELECT DISTINCT author FROM articles WHERE article_id = $1`, [article_id])
+    .then(result => {
+        if (result.rows.length === 0) return Promise.reject({status: 404, msg: "Not found"})
+        return author = result.rows[0].author
+    })
+    .then(author => {
+        return db.query(`
+        INSERT INTO comments
+        (body, author, article_id)
+        VALUES ($1, $2, $3)
+        RETURNING *
+        `,
+        [commentToPost.body, author, article_id])
+    })
+    .then(comment => {
+        return comment.rows[0]
+    })
+
+}
