@@ -29,7 +29,7 @@
   "GET /api/articles/:article_id": {
     "description": "serves an article that has the chosen article id",
     "exampleResponse": {
-        "article": [
+        "article": 
           {
             "article_id": 1,
             "title": "Living in the shadow of a great man",
@@ -40,7 +40,6 @@
             "votes": 100,
             "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
           }
-        ]
     }
   },
   "GET /api/articles/:article_id/comments": {
