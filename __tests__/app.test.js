@@ -47,14 +47,14 @@ describe('GET /api/articles:article_id', () => {
         .expect(200)
         .then(result => {
             const {article} = result.body
-            expect(article[0].article_id).toBe(1)
-            expect(article[0].title).toBe("Living in the shadow of a great man")
-            expect(article[0].topic).toBe("mitch")
-            expect(article[0].author).toBe("butter_bridge")
-            expect(article[0].body).toBe('I find this existence challenging')
-            expect(article[0].created_at).toBe("2020-07-09T20:11:00.000Z")
-            expect(article[0].votes).toBe(100)
-            expect(article[0].article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700")
+            expect(article.article_id).toBe(1)
+            expect(article.title).toBe("Living in the shadow of a great man")
+            expect(article.topic).toBe("mitch")
+            expect(article.author).toBe("butter_bridge")
+            expect(article.body).toBe('I find this existence challenging')
+            expect(article.created_at).toBe("2020-07-09T20:11:00.000Z")
+            expect(article.votes).toBe(100)
+            expect(article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700")
         })   
     });
 
