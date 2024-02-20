@@ -193,6 +193,78 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
 });
 
+describe('PATCH /api/articles/:article_id', () => {
+    test('STATUS 200: responds with the updated article as per the requested body', () => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({
+            incVotes: -5
+        })
+        .expect(200)
+        .then(result => {
+            const {article} = result.body
+            console.log(article)
+            expect(article.article_id).toBe(1)
+            expect(article.title).toBe('Living in the shadow of a great man')
+            expect(article.topic).toBe('mitch')
+            expect(article.author).toBe('butter_bridge')
+            expect(article.body).toBe('I find this existence challenging')
+            expect(article.created_at).toBe('2020-07-09T20:11:00.000Z')
+            expect(article.votes).toBe(95)
+            expect(article.article_img_url).toBe('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700')
+        })
+        
+    });
+
+    test('STATUS 400: responds with appropriate error message for a malformed body request ', () => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({})
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 400: responds with appropriate error message for a failing schema validation ', () => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({
+            incVotes: "word"
+        })
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 400: responds with appropriate error message for an invalid article id ', () => {
+        return request(app)
+        .patch("/api/articles/notAnId")
+        .send({
+            incVotes: 5
+        })
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 404: responds with appropriate error message for an valid but non-existant article id ', () => {
+        return request(app)
+        .patch("/api/articles/99999")
+        .send({
+            incVotes: 5
+        })
+        .expect(404)
+        .then(result => {
+            expect(result.body.msg).toBe("Not found")
+        })
+    });
+
+
+});
+
 describe('Incorrect route', () => {
     test('STATUS 404: should respond with appropriate error message when route does not exist', () => {
         return request(app)
