@@ -1,4 +1,13 @@
-const {selectAllTopics, readAllEndpoints, selectArticleById, selectAllArticles, selectCommentsByArticleId, insertCommentByArticleId} = require("../models/app.models.js")
+const {
+        selectAllTopics, 
+        readAllEndpoints, 
+        selectArticleById, 
+        selectAllArticles, 
+        selectCommentsByArticleId, 
+        insertCommentByArticleId, 
+        updateArticleById
+     }
+= require("../models/app.models.js")
 
 exports.getAllTopics = (req,res,next) => {
     selectAllTopics()
@@ -48,6 +57,17 @@ exports.postCommentByArticleId = ((req,res,next) => {
     const commentToPost = req.body
     insertCommentByArticleId(article_id, commentToPost).then(comment => {
         res.status(201).send( {comment} )
+    })
+    .catch(err => {
+        next(err)
+    })
+})
+
+exports.patchArticleById = ((req,res, next) => {
+    const articleId = req.params.article_id
+    const {incVotes} = req.body
+    updateArticleById(articleId, incVotes).then(article => {
+        res.status(200).send({article})
     })
     .catch(err => {
         next(err)
