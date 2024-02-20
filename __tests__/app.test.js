@@ -142,7 +142,7 @@ describe('GET /api/articles/:article_id/comments', () => {
 
     test("STATUS 404: responds with appropriate error message for when given a valid but non-existant article id", () => {
         return request(app)
-        .get("/api/articles/99999/comments")
+        .get("/api/articles/999/comments")
         .expect(404)
         .then(result => {
             expect(result.body.msg).toBe("Not found")
@@ -155,14 +155,14 @@ describe('POST /api/articles/:article_id/comments', () => {
         return request(app)
         .post("/api/articles/2/comments")
         .send({
-            username: "myAmazingUsername",
-            body: "My even more amazing body description"
+            username: "icellusedkars",
+            body: "My amazing body description"
         })
         .expect(201)
         .then(result => {
             const {comment} = result.body
             expect(comment.comment_id).toBe(19)
-            expect(comment.body).toBe("My even more amazing body description")
+            expect(comment.body).toBe("My amazing body description")
             expect(comment.article_id).toBe(2)
             expect(comment.author).toBe("icellusedkars")
             expect(comment.votes).toBe(0)
@@ -184,7 +184,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         return request(app)
         .post("/api/articles/2/comments")
         .send({
-            username: 5,
+            username: "icellusedkars",
             body: null 
         })
         .expect(400)
@@ -197,7 +197,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         return request(app)
         .post("/api/articles/notAnId/comments")
         .send({
-            username: "testUsername",
+            username: "icellusedkars",
             body: "Test body description"
         })
         .expect(400)
@@ -210,8 +210,21 @@ describe('POST /api/articles/:article_id/comments', () => {
         return request(app)
         .post("/api/articles/99999/comments")
         .send({
-            username: "testUsername",
+            username: "icellusedkars",
             body: "Test body description"
+        })
+        .expect(404)
+        .then(result => {
+            expect(result.body.msg).toBe("Not found")
+        })
+    });
+
+    test('STATUS 404: responds with appropriate error message for a non-existant username', () => {
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send({
+            username: 'invalidUsername',
+            body: 'test body'
         })
         .expect(404)
         .then(result => {
