@@ -47,7 +47,6 @@ exports.selectCommentsByArticleId = (article_id) => {
     ORDER BY created_at DESC
     `, [article_id])
     .then(results => {
-        if (results.rows.length === 0) return Promise.reject({status: 404, msg: "Not found"})
         return results.rows
     })
 }
@@ -95,4 +94,18 @@ exports.updateArticleById = (articleId, incVotes) => {
         })
     })
     
+}
+
+exports.checkArticleExists = (articleId) => {
+    return db.query(`
+    SELECT * FROM articles
+    WHERE article_id = $1
+    `, [articleId])
+    .then((dbOutput) => {
+        if (dbOutput.rows.length === 0) {
+            // resource DOES NOT exist
+            return Promise.reject({status: 404, msg: "Not found"})
+        }
+        return dbOutput.rows
+    })
 }
