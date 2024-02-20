@@ -99,11 +99,38 @@ describe('GET /api/articles/:article_id/comments', () => {
         .then(result => {
             const {comments} = result.body
             expect(comments.length).toBe(11)
-            for (const comment of comments) expect(comment.article_id).toBe(1)
-            expect(comments).toBeSortedBy("created_at", {descending: true})
+            for (const comment of comments) {
+                expect(typeof comment.comment_id).toBe("number")
+                expect(typeof comment.body).toBe("string")
+                expect(comment.article_id).toBe(1)
+                expect(typeof comment.author).toBe("string")
+                expect(typeof comment.votes).toBe("number")
+                expect(typeof comment.created_at).toBe("string")
+            }
+            
         })
     });
     
+    test('STATUS 200: ensure that the responded array of comments is ordered by created_at, in descending order ', () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((result => {
+            const {comments} = result.body
+            expect(comments).toBeSortedBy("created_at", {descending: true})
+        }))
+    });
+
+    test("STATUS 200: responds with an empty array if the article has no comments", () => {
+        return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(result => {
+            const {comments} = result.body
+            expect(comments.length).toBe(0)
+        })
+    })
+
     test('STATUS: 400: responds with appropriate error message for when given an invalid article id', () => {
         return request(app)
         .get("/api/articles/notanid/comments")
@@ -203,7 +230,6 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(200)
         .then(result => {
             const {article} = result.body
-            console.log(article)
             expect(article.article_id).toBe(1)
             expect(article.title).toBe('Living in the shadow of a great man')
             expect(article.topic).toBe('mitch')

@@ -5,7 +5,8 @@ const {
         selectAllArticles, 
         selectCommentsByArticleId, 
         insertCommentByArticleId, 
-        updateArticleById
+        updateArticleById,
+        checkArticleExists
      }
 = require("../models/app.models.js")
 
@@ -43,10 +44,18 @@ exports.getArticleById = (req,res,next) => {
 
 exports.getCommentsByArticleId = ((req,res,next) => {
     const {article_id} = req.params
-    selectCommentsByArticleId(article_id)
-    .then(comments => {
-        res.status(200).send({comments})
+
+    // Check that the article exists using the article id
+    const promises = [checkArticleExists(article_id)]
+
+    // Find the comments array associated with the article id
+    promises.push(selectCommentsByArticleId(article_id))
+
+    // Both the article and comments array must be truthy for a successful request
+    Promise.all(promises).then(promiseResolutions => {
+        res.status(200).send({comments: promiseResolutions[1]})
     })
+    // Otherwise catch the error 
     .catch(err => {
         next(err)
     })
