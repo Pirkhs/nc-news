@@ -1,6 +1,34 @@
 const db = require("../db/connection.js")
 const fs = require("fs/promises")
 
+exports.checkArticleExists = (articleId) => {
+    return db.query(`
+    SELECT * FROM articles
+    WHERE article_id = $1
+    `, [articleId])
+    .then((dbOutput) => {
+        if (dbOutput.rows.length === 0) {
+            // resource DOES NOT exist
+            return Promise.reject({status: 404, msg: "Not found"})
+        }
+        return dbOutput.rows
+    })
+}
+
+exports.checkUsernameExists = (username) => {
+    return db.query(`
+    SELECT * FROM users
+    WHERE username = $1 
+    `, [username])
+    .then(dbOutput => {
+        if (dbOutput.rows.length === 0){
+            return Promise.reject({status: 404, msg: "Not found"})
+        }
+        return dbOutput.rows
+    })
+}
+
+
 exports.selectAllTopics = () => {
     return db.query(`
     SELECT * FROM topics
@@ -52,44 +80,21 @@ exports.selectCommentsByArticleId = (article_id) => {
     })
 }
 
-exports.insertCommentByArticleId = (article_id, commentToPost) => {
+exports.insertCommentByArticleId = (article_id, username, body) => {
 
-    // Check for any bad requests and reject the promise
-    if (!commentToPost.username || !commentToPost.body) return Promise.reject({status: 400, msg: "Bad request"})
+    if (!article_id || !username || !body) return Promise.reject({status: 400, msg: "Bad request"})
     
-    // Begin my checking for whether the username exists
     return db.query(`
-    SELECT * FROM users
-    WHERE username = $1
-    `, [commentToPost.username])
-    .then(username => {
-        // If username does not exist, return a rejected promise of 'not found'
-        if (!username.rows[0]) return Promise.reject({status: 404, msg: "Not found"})
+    INSERT INTO comments
+    (article_id, author, body)
+    VALUES ($1, $2, $3)
+    RETURNING *
+    `, [article_id, username, body])
+    .then(result => {
+        console.log(result.rows[0])
+        return result.rows[0]
     })
-    .then(() => {
-        // Check for whether the article id exists
-        return db.query(`
-            SELECT * FROM articles
-            WHERE article_id = $1
-        `, [article_id])
-        .then((result) => {
-            // If article id is valid but non-existant, reject the promise 
-            if (result.rows.length === 0) return Promise.reject ({status: 404, msg: "Not found"})
 
-            // 'Happy Path' for valid requests
-            return db.query(`
-                INSERT INTO comments
-                (body, author, article_id)
-                VALUES ($1, $2, $3)
-                RETURNING *
-                `,
-                [commentToPost.body, commentToPost.username, article_id]
-            )
-            .then(comment => {
-                return comment.rows[0]
-            })
-        })
-    })
 }
 exports.updateArticleById = (articleId, incVotes) => {
     return db.query(`
@@ -113,16 +118,15 @@ exports.updateArticleById = (articleId, incVotes) => {
     
 }
 
-exports.checkArticleExists = (articleId) => {
-    return db.query(`
-    SELECT * FROM articles
-    WHERE article_id = $1
-    `, [articleId])
-    .then((dbOutput) => {
-        if (dbOutput.rows.length === 0) {
-            // resource DOES NOT exist
-            return Promise.reject({status: 404, msg: "Not found"})
-        }
-        return dbOutput.rows
-    })
-}
+// exports.deleteCommentById = (commentId) => {
+//     return db.query(`
+//     SELECT * FROM comments
+//     WHERE comment_id = $1
+//     `, [comment_id])
+//     .then(() => {
+//         return db.query(`
+//         DELETE FROM comments
+//         WHERE comment_id = $1
+//         `, [commentId])
+//     })
+// }

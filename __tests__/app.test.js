@@ -321,6 +321,31 @@ describe('PATCH /api/articles/:article_id', () => {
 
 });
 
+// describe('DELETE /api/comments/:comment_id', () => {
+//     test("STATUS 204: responds with 204 'No content' when deleting a comment by its id ", () => {
+//         return request(app)
+//         .delete("/api/comments/2")
+//         .expect(204)
+//     });
+//     test("STATUS 400: responds with appropriate error message for an invalid comment id", () => {
+//         return request(app)
+//         .delete("/api/comments/notAnId")
+//         .expect(400)
+//         .then(result => {
+//             expect(result.body.msg).toBe("Bad request")
+//         })
+//     })
+//     test('STATUS 404: responds with appropriate erorr message for a valid but non-existant id', () => {
+//         return request(app)
+//         .delete("/api/comments/99999")
+//         .expect(404)
+//         .then(result => {
+//             expect(result.body.msg).toBe("Not found")
+//         })
+//     });
+
+// });
+
 describe('Incorrect route', () => {
     test('STATUS 404: should respond with appropriate error message when route does not exist', () => {
         return request(app)
