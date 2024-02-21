@@ -77,18 +77,35 @@ describe('GET /api/articles:article_id', () => {
     })
 });
 
-// describe('GET /api/articles', () => {
-//     test('STATUS 200: responds with an article array of object, each with their own appropriate properties and values ', () => {
-//         return request(app)
-//         .get("/api/articles")
-//         .expect(200)
-//         .then(result => {
-//             const {articles} = result.body
-//             // console.log(articles)
-//             expect(articles.length).toBe(13)
-//         })
-//     });
-// });
+describe('GET /api/articles', () => {
+    test('STATUS 200: responds with an article array of object, each with their own appropriate properties and values ', () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(result => {
+            const {articles} = result.body
+            expect(articles.length).toBe(13)
+            for (const article of articles){
+                expect(typeof article.author).toBe("string")
+                expect(typeof article.title).toBe("string")
+                expect(typeof article.article_id).toBe("number")
+                expect(typeof article.topic).toBe("string")
+                expect(typeof article.created_at).toBe("string")
+                expect(typeof article.votes).toBe("number")
+                expect(typeof article.article_img_url).toBe("string")
+                expect(typeof article.comment_count).toBe("string")
+            }
+        })
+    });
+    test('STATUS 200: ensure that the array of articles are sorted by their date created in descending order', () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(result => {
+            expect(result.body.articles).toBeSortedBy("created_at", {descending: true})
+        })
+    });
+});
 
 
 describe('GET /api/articles/:article_id/comments', () => {
@@ -131,7 +148,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     })
 
-    test('STATUS: 400: responds with appropriate error message for when given an invalid article id', () => {
+    test('STATUS 400: responds with appropriate error message for when given an invalid article id', () => {
         return request(app)
         .get("/api/articles/notanid/comments")
         .expect(400)
