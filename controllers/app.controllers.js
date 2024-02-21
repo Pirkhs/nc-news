@@ -83,12 +83,12 @@ exports.patchArticleById = ((req,res, next) => {
     })
 })
 
-// exports.removeCommentById = ((req,res,next) => {
-//     const commentId = req.params.comment_id
-//     deleteCommentById(commentId).then(() => {
-//         res.send(204)
-//     })
-//     .catch(err => {
-//         next(err)
-//     })
-// })
+exports.removeCommentById = ((req,res,next) => {
+    const commentId = req.params.comment_id
+    deleteCommentById(commentId).then(() => {
+        res.send(204)
+    })
+    .catch(err => {
+        next(err)
+    })
+})

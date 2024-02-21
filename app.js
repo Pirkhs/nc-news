@@ -15,7 +15,7 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId)
 
 app.patch("/api/articles/:article_id", patchArticleById)
 
-// app.delete("/api/comments/:comment_id", removeCommentById)
+app.delete("/api/comments/:comment_id", removeCommentById)
 
 // PSQL Errors
 app.use((err, request, response, next) => {
