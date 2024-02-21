@@ -6,7 +6,9 @@ const {
         selectCommentsByArticleId, 
         insertCommentByArticleId, 
         updateArticleById,
-        checkArticleExists
+        checkArticleExists,
+        deleteCommentById,
+        checkUsernameExists
      }
 = require("../models/app.models.js")
 
@@ -58,12 +60,14 @@ exports.getCommentsByArticleId = ((req,res,next) => {
 
 exports.postCommentByArticleId = ((req,res,next) => {
     const {article_id} = req.params
-    const commentToPost = req.body
-    insertCommentByArticleId(article_id, commentToPost).then(comment => {
-        res.status(201).send( {comment} )
+    const {username, body} = req.body
+    
+    const promises = [ checkUsernameExists(username), checkArticleExists(article_id), insertCommentByArticleId(article_id, username, body)]
+    
+    Promise.all(promises).then(promiseResolutions => {
+        res.status(201).send( {comment: promiseResolutions[2]} )
     })
     .catch(err => {
-        // console.log(err)
         next(err)
     })
 })
@@ -78,3 +82,13 @@ exports.patchArticleById = ((req,res, next) => {
         next(err)
     })
 })
+
+// exports.removeCommentById = ((req,res,next) => {
+//     const commentId = req.params.comment_id
+//     deleteCommentById(commentId).then(() => {
+//         res.send(204)
+//     })
+//     .catch(err => {
+//         next(err)
+//     })
+// })
