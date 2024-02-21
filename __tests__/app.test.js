@@ -357,3 +357,19 @@ describe('Incorrect route', () => {
     });
 });
 
+describe('GET /api/users', () => {
+    test('STATUS 200: responds with an array of users, each with their own username, name and avatar_url ', () => {
+        return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(result => {
+            const {users} = result.body
+            expect(users.length).toBe(4)
+            users.forEach(user => {
+                expect(typeof user.username).toBe("string")
+                expect(typeof user.name).toBe("string")
+                expect(typeof user.avatar_url).toBe("string")
+            })
+        })
+    });
+});
