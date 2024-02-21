@@ -8,7 +8,8 @@ const {
         updateArticleById,
         checkArticleExists,
         deleteCommentById,
-        checkUsernameExists
+        checkUsernameExists,
+        selectAllUsers
      }
 = require("../models/app.models.js")
 
@@ -90,5 +91,12 @@ exports.removeCommentById = ((req,res,next) => {
     })
     .catch(err => {
         next(err)
+    })
+})
+
+exports.getAllUsers = ((req,res,next) => {
+    selectAllUsers()
+    .then(users => {
+        res.status(200).send({users})
     })
 })
