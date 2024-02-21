@@ -91,7 +91,6 @@ exports.insertCommentByArticleId = (article_id, username, body) => {
     RETURNING *
     `, [article_id, username, body])
     .then(result => {
-        console.log(result.rows[0])
         return result.rows[0]
     })
 
@@ -118,15 +117,16 @@ exports.updateArticleById = (articleId, incVotes) => {
     
 }
 
-// exports.deleteCommentById = (commentId) => {
-//     return db.query(`
-//     SELECT * FROM comments
-//     WHERE comment_id = $1
-//     `, [comment_id])
-//     .then(() => {
-//         return db.query(`
-//         DELETE FROM comments
-//         WHERE comment_id = $1
-//         `, [commentId])
-//     })
-// }
+exports.deleteCommentById = (commentId) => {
+    return db.query(`
+    SELECT * FROM comments
+    WHERE comment_id = $1
+    `, [commentId])
+    .then((comment) => {
+        if (comment.rows.length === 0) return Promise.reject({status: 404, msg: "Not found"})
+        return db.query(`
+        DELETE FROM comments
+        WHERE comment_id = $1
+        `, [commentId])
+    })
+}
