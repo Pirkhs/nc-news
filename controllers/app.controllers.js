@@ -9,7 +9,8 @@ const {
         checkArticleExists,
         deleteCommentById,
         checkUsernameExists,
-        selectAllUsers
+        selectAllUsers,
+        checkTopicExists
      }
 = require("../models/app.models.js")
 
@@ -40,8 +41,16 @@ exports.getArticleById = (req,res,next) => {
 }
 
 exports.getAllArticles = (req,res,next) => {
-    selectAllArticles().then(articles => {
-        res.status(200).send({articles})
+    const {topic} = req.query
+    const promises = [selectAllArticles(topic)]
+    
+    if (topic) promises.push(checkTopicExists(topic))
+
+    Promise.all(promises).then(promiseResolutions => {
+        res.status(200).send({articles: promiseResolutions[0]})
+    })
+    .catch(err => {
+        next(err)
     })
 }
 

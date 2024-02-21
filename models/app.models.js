@@ -28,6 +28,17 @@ exports.checkUsernameExists = (username) => {
     })
 }
 
+exports.checkTopicExists = (topic) => {
+    return db.query(`
+    SELECT * FROM topics
+    WHERE slug = $1
+    `, [topic])
+    .then(topic => {
+        if (topic.rows.length === 0) return Promise.reject({status: 404, msg: "Not found"})
+        return topic
+    })
+}
+
 
 exports.selectAllTopics = () => {
     return db.query(`
@@ -52,7 +63,9 @@ exports.selectArticleById = (article_id) => {
     })
 }
 
-exports.selectAllArticles = () => {
+exports.selectAllArticles = (topic) => {
+    const whereStr = topic ? "WHERE topic = $1" : ""
+    const replacements = topic ? [topic] : []
 
     return db.query(`
     SELECT 
@@ -60,9 +73,10 @@ exports.selectAllArticles = () => {
     FROM articles
     LEFT JOIN comments
     ON comments.article_id = articles.article_id
+    ${whereStr}
     GROUP BY articles.article_id
     ORDER BY articles.created_at DESC
-    `)
+    `, replacements)
     .then(articles => {
         return articles.rows
     })

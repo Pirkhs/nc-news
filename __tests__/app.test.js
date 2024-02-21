@@ -353,13 +353,53 @@ describe('GET /api/users', () => {
         .expect(200)
         .then(result => {
             const {users} = result.body
-            console.log(users)
             expect(users.length).toBe(4)
             users.forEach(user => {
                 expect(typeof user.username).toBe("string")
                 expect(typeof user.name).toBe("string")
                 expect(typeof user.avatar_url).toBe("string")
             })
+        })
+    });
+});
+
+describe('GET /api/articles?topic=query', () => {
+    test("STATUS 200: responds with an array of articles, filtered by the topic value specified in the query", () => {
+        return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(result => {
+            const {articles} = result.body
+            expect(articles.length).toBe(12)
+            articles.forEach(article => {
+                expect(typeof article.author).toBe("string")
+                expect(typeof article.title).toBe("string")
+                expect(typeof article.article_id).toBe("number")
+                expect(article.topic).toBe("mitch")
+                expect(typeof article.created_at).toBe("string")
+                expect(typeof article.votes).toBe("number")
+                expect(typeof article.comment_count).toBe("string")
+
+            })
+
+        })
+    })
+    test('STATUS 200: responds with an empty array of articles if the topic exists but has no articles on it. ', () => {
+        return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(result => {
+            const {articles} = result.body
+            expect(articles).toEqual([])
+        })
+    });
+
+    test('STATUS 404: responds with appropriate error message for when passed a non-existant topic name ', () => {
+        return request(app)
+        .get('/api/articles?topic=notATopic')
+        .expect(404)
+        .then(result => {
+            expect(result.body.msg).toBe("Not found")
         })
     });
 });
