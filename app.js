@@ -1,16 +1,11 @@
 const express = require("express");
 const app = express();
-const {
-    getAllTopics, 
-    getAllEndpoints, 
-    getArticleById, 
-    getAllArticles, 
-    getCommentsByArticleId, 
-    postCommentByArticleId, 
-    patchArticleById, 
-    removeCommentById,
-    getAllUsers
-} = require("./controllers/app.controllers.js")
+
+const { getAllEndpoints } = require("./controllers/app.controllers.js")
+const {getAllTopics} = require("./controllers/topics.controllers.js")
+const {getAllArticles, getArticleById, patchArticleById} = require("./controllers/articles.controllers.js")
+const {postCommentByArticleId, getCommentsByArticleId, removeCommentById} = require("./controllers/comments.controllers.js")
+const {getAllUsers} = require("./controllers/users.controllers.js")
 
 app.use(express.json())
 
