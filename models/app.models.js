@@ -24,20 +24,21 @@ exports.selectArticleById = (article_id) => {
     })
 }
 
-// exports.selectAllArticles = () => {
-//     const articlesFile = require("../db/data/test-data/articles.js")
-//     return db.query(`
-//     SELECT * FROM articles
-//     `)
-//     .then(articles => {
-//         const articlesToSend = articles.rows.map(article => {
-//             delete article.body
-//             return article
-//         })
-    
-//         return articlesToSend
-//     })
-// }
+exports.selectAllArticles = () => {
+
+    return db.query(`
+    SELECT 
+    articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.body) AS comment_count 
+    FROM articles
+    LEFT JOIN comments
+    ON comments.article_id = articles.article_id
+    GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC
+    `)
+    .then(articles => {
+        return articles.rows
+    })
+}
 
 
 exports.selectCommentsByArticleId = (article_id) => {
