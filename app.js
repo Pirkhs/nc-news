@@ -1,26 +1,10 @@
 const express = require("express");
 const app = express();
-
-const { getAllEndpoints } = require("./controllers/app.controllers.js")
-const {getAllTopics} = require("./controllers/topics.controllers.js")
-const {getAllArticles, getArticleById, patchArticleById} = require("./controllers/articles.controllers.js")
-const {postCommentByArticleId, getCommentsByArticleId, removeCommentById} = require("./controllers/comments.controllers.js")
-const {getAllUsers} = require("./controllers/users.controllers.js")
+const apiRouter = require("./routes/api-router.js")
 
 app.use(express.json())
 
-app.get("/api/topics", getAllTopics)
-app.get("/api", getAllEndpoints)
-app.get("/api/articles/:article_id", getArticleById)
-app.get("/api/articles", getAllArticles)
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
-app.get("/api/users", getAllUsers)
-
-app.post("/api/articles/:article_id/comments", postCommentByArticleId)
-
-app.patch("/api/articles/:article_id", patchArticleById)
-
-app.delete("/api/comments/:comment_id", removeCommentById)
+app.use("/api", apiRouter)
 
 // Incorrect Route Errors
 app.all("/*", (request, response, next) => {
