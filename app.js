@@ -22,6 +22,11 @@ app.patch("/api/articles/:article_id", patchArticleById)
 
 app.delete("/api/comments/:comment_id", removeCommentById)
 
+// Incorrect Route Errors
+app.all("/*", (request, response, next) => {
+    response.status(404).send({msg: "Route does not exist"})
+})
+
 // PSQL Errors
 app.use((err, request, response, next) => {
     if (err.code === "22P02" || err.code === "23502") response.status(400).send({msg: "Bad request"})
@@ -32,12 +37,6 @@ app.use((err, request, response, next) => {
 app.use((err, request, response, next) => {
     if (err.status && err.msg) response.status(err.status).send({msg: err.msg})
     else next(err)
-})
-
-// Incorrect Route Errors
-app.all("/*", (request, response, next) => {
-    response.status(404).send({msg: "Route does not exist"})
-    next(err)
 })
 
 // Internal Server Errors
