@@ -405,6 +405,65 @@ describe('GET /api/articles?topic=query', () => {
     });
 });
 
+describe('GET /api/articles (sorting queries)', () => {
+    test('STATUS 200: responds with an array of articles sorted by the sort_by query specified and in the order specified', () => {
+        return request(app)
+        .get("/api/articles?sort_by=title&&order=asc")
+        .expect(200)
+        .then(result => {
+            const {articles} = result.body
+            expect(articles.length).toBe(13)
+            articles.forEach(article => {
+                expect(typeof article.author).toBe("string")
+                expect(typeof article.title).toBe("string")
+                expect(typeof article.article_id).toBe("number")
+                expect(typeof article.topic).toBe("string")
+                expect(typeof article.created_at).toBe("string")
+                expect(typeof article.votes).toBe("number")
+                expect(typeof article.comment_count).toBe("string")
+            })
+            expect(articles).toBeSortedBy("title", {descending: false})
+        })
+    });
+    test('STATUS 200: responds with an array of articles sorted by the default of created_at and in the default order of descending', () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(result => {
+            const {articles} = result.body
+            expect(articles.length).toBe(13)
+            articles.forEach(article => {
+                expect(typeof article.author).toBe("string")
+                expect(typeof article.title).toBe("string")
+                expect(typeof article.article_id).toBe("number")
+                expect(typeof article.topic).toBe("string")
+                expect(typeof article.created_at).toBe("string")
+                expect(typeof article.votes).toBe("number")
+                expect(typeof article.comment_count).toBe("string")
+            })
+            expect(articles).toBeSortedBy("created_at", {descending: true})
+            
+        })
+    });
+    test('STATUS 400: responds with an appropriate error message for an invalid sort_by query   ', () => {
+        return request(app)
+        .get("/api/articles?sort_by=notAValidColumn")
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 400: responds with an appropriate error message for an invalid order query', () => {
+        return request(app)
+        .get("/api/articles?order=notAValidOrder")
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+});
+
 describe('Incorrect route', () => {
     test('STATUS 404: should respond with appropriate error message when route does not exist', () => {
         return request(app)

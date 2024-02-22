@@ -14,9 +14,12 @@ exports.checkArticleExists = (articleId) => {
     })
 }
 
-exports.selectAllArticles = (topic) => {
+exports.selectAllArticles = (topic, sort_by="created_at", order="desc") => {
     const whereStr = topic ? "WHERE topic = $1" : ""
     const replacements = topic ? [topic] : []
+
+    if (!["title", "topic", "author", "body", "created_at", "votes", "article_img_url"].includes(sort_by)) return Promise.reject({status: 400, msg: "Bad request"})
+    if (order !== "desc" && order !== "asc") return Promise.reject({status: 400, msg: "Bad request"})
 
     return db.query(`
     SELECT 
@@ -26,7 +29,7 @@ exports.selectAllArticles = (topic) => {
     ON comments.article_id = articles.article_id
     ${whereStr}
     GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC
+    ORDER BY articles.${sort_by} ${order}
     `, replacements)
     .then(articles => {
         return articles.rows
