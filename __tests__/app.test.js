@@ -487,6 +487,70 @@ describe('GET /api/users/:username', () => {
     });
 });
 
+describe('PATCH /api/comments/:comment_id', () => {
+    test('STATUS 201: should respond with an updated comment object with its votes value updated by the inc_votes value specified in the query', () => {
+        return request(app)
+        .patch("/api/comments/1")
+        .send({
+            inc_votes: -5
+        })
+        .expect(201)
+        .then(result => {
+            const {comment} = result.body
+            expect(comment.comment_id).toBe(1)
+            expect(comment.body).toBe("Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!")
+            expect(comment.article_id).toBe(9)
+            expect(comment.votes).toBe(11)
+            expect(comment.created_at).toBe("2020-04-06T12:17:00.000Z")
+        })
+    });
+    test('STATUS 400: should respond with an appropriate error message for when passed a malformed body', () => {
+        return request(app)
+        .patch("/api/comments/1")
+        .send({})
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 400: should respond with an appropriate error message for the request body fails the schema validation', () => {
+        return request(app)
+        .patch("/api/comments/1")
+        .send({
+            inc_votes: "notAnInteger"
+        })
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 400: should respond with an appropriate error message for an invalid comment id', () => {
+        return request(app)
+        .patch("/api/comments/notAValidId")
+        .send({
+            inc_votes: 5
+        })
+        .expect(400)
+        .then(result => {
+            expect(result.body.msg).toBe("Bad request")
+        })
+    });
+
+    test('STATUS 404: should respond with an appropriate error message for a valid but non-existant comment id', () => {
+        return request(app)
+        .patch("/api/comments/9999")
+        .send({
+            inc_votes: 5
+        })
+        .expect(404)
+        .then(result => {
+            expect(result.body.msg).toBe("Not found")
+        })
+    });
+});
+
 describe('Incorrect route', () => {
     test('STATUS 404: should respond with appropriate error message when route does not exist', () => {
         return request(app)

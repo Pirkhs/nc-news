@@ -1,5 +1,5 @@
 const {checkArticleExists} = require("../models/articles.models")
-const {selectCommentsByArticleId, insertCommentByArticleId, deleteCommentById} = require("../models/comments.models")
+const {selectCommentsByArticleId, insertCommentByArticleId, deleteCommentById, updateCommentById} = require("../models/comments.models")
 const {checkUsernameExists} = require("../models/users.models")
 
 exports.getCommentsByArticleId = ((req,res,next) => {
@@ -34,6 +34,18 @@ exports.removeCommentById = ((req,res,next) => {
     const commentId = req.params.comment_id
     deleteCommentById(commentId).then(() => {
         res.send(204)
+    })
+    .catch(err => {
+        next(err)
+    })
+})
+
+exports.patchCommentById = ((req, res, next) => {
+    const commentId = req.params.comment_id
+    const incVotes = req.body.inc_votes
+    updateCommentById(commentId, incVotes)
+    .then(comment => {
+        res.status(201).send({comment})
     })
     .catch(err => {
         next(err)
