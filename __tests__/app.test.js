@@ -464,6 +464,29 @@ describe('GET /api/articles (sorting queries)', () => {
     });
 });
 
+
+describe('GET /api/users/:username', () => {
+    test('STATUS 200: reponds with a user object with their respective username, avatar_url and name', () => {
+        return request(app)
+        .get("/api/users/lurker")
+        .expect(200)
+        .then(result => {
+            const {user} = result.body
+            expect(user.username).toBe('lurker')
+            expect(user.name).toBe("do_nothing")
+            expect(user.avatar_url).toBe("https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png")
+        })
+    });
+    test('STATUS 404: responds with an appropriate error message for a valid but non-existant username', () => {
+        return request(app)
+        .get("/api/users/usernameDoesNotExist")
+        .expect(404)
+        .then(result => {
+            expect(result.body.msg).toBe("Not found")
+        })
+    });
+});
+
 describe('Incorrect route', () => {
     test('STATUS 404: should respond with appropriate error message when route does not exist', () => {
         return request(app)
