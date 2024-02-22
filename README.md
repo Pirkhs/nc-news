@@ -24,4 +24,4 @@
 - Add .env files '.env.test' and '.env.development' with their appropriate PGATABASE names either nc_news_test or nc_news respectively, as shown in the setup.sql file
 
 *PSQL and Node-Postgres Version*
-- It is recommended to be in PSQL version 15.5 and Node version 21.2.0
+- It is recommended to be in PSQL version 15.5 and Node version 21.2.0 (or above)
