@@ -1,7 +1,7 @@
 # Northcoders News API
 
 *Live Hosted Version*
-- You will find a link to the hosted version here: https://dashboard.render.com/web/srv-cnbivjgl5elc73flgo40/deploys/dep-cnbjafud3nmc73eesr4g?r=2024-02-22%4011%3A50%3A28%7E2024-02-22%4011%3A53%3A23
+- You will find a link to the hosted version here: https://nc-news-xq0k.onrender.com/
 
 *Summary*
 - A simple web service API, constructed using PSQL and Node-Postgres.
