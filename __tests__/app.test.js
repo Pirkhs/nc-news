@@ -564,7 +564,6 @@ describe('POST /api/articles', () => {
         .expect(201)
         .then(result => {
             const {article} = result.body
-            console.log(article)
             expect(article.article_id).toBe(14)
             expect(article.topic).toBe("mitch")
             expect(article.author).toBe("butter_bridge")
