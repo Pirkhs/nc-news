@@ -12,7 +12,6 @@ exports.getAllArticles = (req,res,next) => {
         res.status(200).send({articles: promiseResolutions[0]})
     })
     .catch(err => {
-        console.log(err)
         next(err)
     })
 }
