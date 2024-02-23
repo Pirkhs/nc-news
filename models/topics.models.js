@@ -1,6 +1,7 @@
 const db = require("../db/connection.js")
 
 exports.checkTopicExists = (topic) => {
+    if (!topic) return Promise.reject({status: 400, msg: "Bad request"})
     return db.query(`
     SELECT * FROM topics
     WHERE slug = $1

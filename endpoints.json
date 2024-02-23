@@ -203,6 +203,23 @@
         "votes": 11,
         "created_at": "2020-04-06T12:17:00.000Z"
       } 
+  },
+  "POST /api/articles": {
+    "description": "serves a new article object that has been requested to post, with a new comment_count property included",
+    "exampleResponse": 
+    {
+      "article_id": 14,
+      "title": "testTitle",
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "body": "testBody",
+      "created_at": "2024-02-23T11:58:15.297Z",
+      "votes": 0,
+      "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+      "comment_count": 0
+    }
+
+  
   }
 }
 

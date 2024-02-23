@@ -1,6 +1,7 @@
 const db = require("../db/connection.js")
 
 exports.checkUsernameExists = (username) => {
+    if (!username) return Promise.reject({status: 400, msg: "Bad request"})
     return db.query(`
     SELECT * FROM users
     WHERE username = $1 
