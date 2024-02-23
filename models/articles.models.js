@@ -73,3 +73,18 @@ exports.updateArticleById = (articleId, incVotes) => {
     })
     
 }
+
+exports.insertArticle = (articleToPost) => {
+    const {title, topic, author, body} = articleToPost
+    return db.query(`
+    INSERT INTO articles
+    (title, topic, author, body)
+    VALUES
+    ($1, $2, $3, $4)
+    RETURNING *
+    `, [ title, topic, author, body ])
+    .then(article => {
+        article.rows[0].comment_count = 0
+        return article.rows[0]
+    })
+}

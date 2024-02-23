@@ -466,7 +466,7 @@ describe('GET /api/articles (sorting queries)', () => {
 
 
 describe('GET /api/users/:username', () => {
-    test('STATUS 200: reponds with a user object with their respective username, avatar_url and name', () => {
+    test('STATUS 200: responds with a user object with their respective username, avatar_url and name', () => {
         return request(app)
         .get("/api/users/lurker")
         .expect(200)
@@ -549,6 +549,80 @@ describe('PATCH /api/comments/:comment_id', () => {
             expect(result.body.msg).toBe("Not found")
         })
     });
+});
+
+describe('POST /api/articles', () => {
+    test('STATUS 201: should respond with the newly-added article object with its appropriate properties and values', () => {
+        return request(app)
+        .post("/api/articles")
+        .send({
+            title: "testTitle",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "testBody"
+        })
+        .expect(201)
+        .then(result => {
+            const {article} = result.body
+            console.log(article)
+            expect(article.article_id).toBe(14)
+            expect(article.topic).toBe("mitch")
+            expect(article.author).toBe("butter_bridge")
+            expect(article.body).toBe("testBody")
+            expect(typeof article.created_at).toBe("string")
+            expect(article.votes).toBe(0)
+            expect(article.article_img_url).toBe('https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700')
+            expect(article.comment_count).toBe(0)
+        })
+    });
+
+    test('STATUS 400: responds with an appropriate error message for a malformed body', () => {
+        return request(app)
+        .post("/api/articles")
+        .send({})
+        .expect(400)
+        .then(result => expect(result.body.msg).toBe("Bad request"))
+    });
+
+    test('STATUS 400: responds with an appropriate error message for a request body that has a failing schema validation', () => {
+        return request(app)
+        .post("/api/articles")
+        .send({
+            title: 5,
+            topic: null,
+            author: null,
+            body: 5,
+        })
+        .expect(400)
+        .then(result => expect(result.body.msg).toBe("Bad request"))
+    });
+
+    test('STATUS 404: responds with an appropriate error message for a valid but non-existant topic name', () => {
+        return request(app)
+        .post("/api/articles")
+        .send({
+            title: "testTitle",
+            topic: "notAValidTopic",
+            author: "butter_bridge",
+            body: "testBody"
+        })
+        .expect(404)
+        .then(result => expect(result.body.msg).toBe("Not found"))
+    });
+
+    test('STATUS 404: responds with an appropriate error message for a valdi but non-existant author name', () => {
+        return request(app)
+        .post("/api/articles")
+        .send({
+            title: "testTitle",
+            topic: "mitch",
+            author: "notAValidAuthor",
+            body: "testBody"
+        })
+        .expect(404)
+        .then(result => expect(result.body.msg).toBe("Not found"))
+    });
+    
 });
 
 describe('Incorrect route', () => {
