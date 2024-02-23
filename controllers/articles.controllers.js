@@ -3,8 +3,8 @@ const {checkTopicExists} = require("../models/topics.models")
 const {checkUsernameExists} = require("../models/users.models")
 
 exports.getAllArticles = (req,res,next) => {
-    const {topic, sort_by, order} = req.query
-    const promises = [selectAllArticles(topic, sort_by, order)]
+    const {topic, sort_by, order, limit, p} = req.query
+    const promises = [selectAllArticles(topic, sort_by, order, limit, p)]
     
     if (topic) promises.push(checkTopicExists(topic))
 
@@ -12,6 +12,7 @@ exports.getAllArticles = (req,res,next) => {
         res.status(200).send({articles: promiseResolutions[0]})
     })
     .catch(err => {
+        console.log(err)
         next(err)
     })
 }

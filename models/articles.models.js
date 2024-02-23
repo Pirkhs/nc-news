@@ -14,13 +14,33 @@ exports.checkArticleExists = (articleId) => {
     })
 }
 
-exports.selectAllArticles = (topic, sort_by="created_at", order="desc") => {
-    const whereStr = topic ? "WHERE topic = $1" : ""
-    const replacements = topic ? [topic] : []
+exports.getTotalArticles = (topic) => {
+    return db.query(`
+    SELECT COUNT(body) AS total_count FROM articles
+    WHERE topic = $1`, [topic])
+    .then(result => {
+        const {total_count} = result.rows[0]
+        console.log(total_count)
+        return total_count
+    })
+}
+
+exports.selectAllArticles = (...args) => {
+    const [topic, sort_by = "created_at", order = "desc", limit = 10, p] = args
+    const queryVals = args.filter(arg => {
+        if (arg) return arg
+    })
+
+    const replacements = []
+    if (queryVals.includes(topic)) replacements.push(topic)
+    if (queryVals.includes(limit)) replacements.push(limit)
+
+    const whereStr = queryVals.includes(topic) ? `WHERE topic = $${replacements.indexOf(topic) + 1}` : ""
+    const limitStr = queryVals.includes(limit) ? `LIMIT $${replacements.indexOf(limit) + 1}` : ""
 
     if (!["title", "topic", "author", "body", "created_at", "votes", "article_img_url"].includes(sort_by)) return Promise.reject({status: 400, msg: "Bad request"})
     if (order !== "desc" && order !== "asc") return Promise.reject({status: 400, msg: "Bad request"})
-
+   
     return db.query(`
     SELECT 
     articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.body) AS comment_count 
@@ -30,6 +50,7 @@ exports.selectAllArticles = (topic, sort_by="created_at", order="desc") => {
     ${whereStr}
     GROUP BY articles.article_id
     ORDER BY articles.${sort_by} ${order}
+    ${limitStr}
     `, replacements)
     .then(articles => {
         return articles.rows

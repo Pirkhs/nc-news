@@ -624,6 +624,29 @@ describe('POST /api/articles', () => {
     
 });
 
+xdescribe('GET /api/articles?limit=query&&p=query', () => {
+    test("STATUS 200: should respond with a limited array of articles specified in the query, and at the page number specified in the query", () => {
+        return request(app)
+        .get("/api/articles?limit=5&&p=1")
+        .expect(200)
+        .then(result => {
+            const {articles} = result.body
+            expect(articles.length).toBe(5)
+            // console.log(articles)
+        })
+    })
+    test("STATUS 200: responds with an array of articles that satisfy EVERY query specified: topic, sort_by, order, limit, and page", () => {
+        return request(app)
+        .get("/api/articles?topic=mitch&&sort_by=title&&order=asc&&limit=5&&p=1")
+        .expect(200)
+        .then(result => {
+            const {articles} = result.body
+            expect(articles.length).toBe(5)
+            console.log(articles)
+        })
+    })
+});
+
 describe('Incorrect route', () => {
     test('STATUS 404: should respond with appropriate error message when route does not exist', () => {
         return request(app)
