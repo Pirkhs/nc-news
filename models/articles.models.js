@@ -18,7 +18,7 @@ exports.selectAllArticles = (topic, sort_by="created_at", order="desc") => {
     const whereStr = topic ? "WHERE topic = $1" : ""
     const replacements = topic ? [topic] : []
 
-    if (!["title", "topic", "author", "body", "created_at", "votes", "article_img_url"].includes(sort_by)) return Promise.reject({status: 400, msg: "Bad request"})
+    if (!["title", "topic", "author", "body", "created_at", "votes", "article_img_url", "comment_count"].includes(sort_by)) return Promise.reject({status: 400, msg: "Bad request"})
     if (order !== "desc" && order !== "asc") return Promise.reject({status: 400, msg: "Bad request"})
 
     return db.query(`
