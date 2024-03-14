@@ -15,7 +15,7 @@
 *General Setting Up*
 - You can __clone__ this repo using the command 'git clone https://github.com/Pirkhs/nc-news.git' in your terminal
 - *Installing Dependencies*
-    - When installing dependencies please run the command 'npm install [package_name]'
+    - When installing dependencies please run the command 'npm install'
     - __MUST HAVE__ dependencies: 'dotenv', 'express', 'pg, 'husky'
     - __OPTIONAL__ dependecies for tests in app.test.js: 'jest', 'jest-extended', 'jest-sorted', 'pg-format', 'supertest'
 - Before sending any requests, ensure the database is seeded locally via the command 'npm run seed'
