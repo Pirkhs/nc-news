@@ -23,7 +23,7 @@ exports.selectAllArticles = (topic, sort_by="created_at", order="desc") => {
 
     return db.query(`
     SELECT 
-    articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.body) AS comment_count 
+    articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.body) AS articles.comment_count 
     FROM articles
     LEFT JOIN comments
     ON comments.article_id = articles.article_id
